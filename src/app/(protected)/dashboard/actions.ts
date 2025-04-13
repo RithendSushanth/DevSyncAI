@@ -12,7 +12,7 @@ const google = createGoogleGenerativeAI({
 export async function askQuestion(question: string, projectId: string) {
     const stream = createStreamableValue()
     const queryVector = await generateEmbedding(question)
-    console.log("Generated Query Vector:", queryVector);
+    // console.log("Generated Query Vector:", queryVector);
     const vectorQuery = `[${queryVector.join(',')}]`
 
 
@@ -32,8 +32,8 @@ export async function askQuestion(question: string, projectId: string) {
         context += `source: ${doc.fileName}\n code content: ${doc.sourceCode}\n summary of the file: ${doc.summary}\n\n`
     }
 
-    console.log("Database Query Result:", result);
-    console.log("Generated Context for AI Model:\n", context);
+    // console.log("Database Query Result:", result);
+    // console.log("Generated Context for AI Model:\n", context);
 
     (async () => {
         const { textStream } = await streamText({

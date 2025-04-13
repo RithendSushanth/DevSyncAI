@@ -21,7 +21,7 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
     const docs = await loadGithubRepo(githubUrl, githubToken)
     const allEmbeddings = await generateEmbeddings(docs)
     await Promise.allSettled(allEmbeddings.map(async (embedding, index) => {
-        console.log(`processing ${index} of ${allEmbeddings.length}`)
+        // console.log(`processing ${index} of ${allEmbeddings.length}`)
         if (!embedding) {
             return
         }
@@ -58,4 +58,4 @@ const generateEmbeddings = async (docs: Document[]) => {
     }))
 }
 
-console.log(await loadGithubRepo(' https://github.com/docker/genai-stack'));
+// console.log(await loadGithubRepo(' https://github.com/docker/genai-stack'));
