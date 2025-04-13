@@ -35,11 +35,22 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="floating">
             <SidebarHeader>
-                <div className="flex items-center gap-2">
-                    {/* Logo Placeholder */}
-                    {open && <h1 className="text-xl font-bold text-primary/80">DEVSYNC AI</h1>}
-                </div>
+                <Link href="/dashboard" className="flex items-center gap-3 px-2 py-1">
+                    <Image
+                        src="/logo.png" 
+                        alt="DevSync Logo"
+                        width={32}
+                        height={32}
+                        className="rounded-md"
+                    />
+                    {open && (
+                        <span className="text-xl font-bold text-primary tracking-tight">
+                            <span className="text-black">Dev</span><span className="text-primary">Sync</span> <span className="text-muted-foreground text-md">AI</span>
+                        </span>
+                    )}
+                </Link>
             </SidebarHeader>
+
 
             <SidebarContent>
                 {/* Application Section */}
