@@ -3,10 +3,33 @@ import { Document } from "langchain/document"
 import { generateEmbedding, summariseCode } from "./gemini"
 import { db } from "@/server/db"
 
+
+
+const fetchDefaultBranch = async (githubUrl: string, githubToken?: string) => {
+    const urlParts = githubUrl.replace("https://github.com/", "").split("/");
+    const [owner, repo] = urlParts;
+    if (!owner || !repo) throw new Error("Invalid GitHub URL");
+
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: {
+            Authorization: `Bearer ${githubToken || process.env.GITHUB_TOKEN}`,
+            Accept: "application/vnd.github.v3+json",
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch repo info: ${res.statusText}`);
+    }
+
+    const repoInfo = await res.json();
+    return repoInfo.default_branch || "main"; // fallback to 'main' if missing
+};
+
 export const loadGithubRepo = async (githubUrl: string, githubToken?: string) => {
+    const defaultBranch = await fetchDefaultBranch(githubUrl, githubToken);
     const loader = new GithubRepoLoader(githubUrl, {
         accessToken: githubToken || process.env.GITHUB_TOKEN,
-        branch: 'main',
+        branch: defaultBranch,
         ignoreFiles: ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb'],
         recursive: true,
         unknown: 'warn',
@@ -27,7 +50,7 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
         }
 
         const sourceCodeEmbedding = await db.sourceCodeEmbeddings.create({
-            data:{
+            data: {
                 summary: embedding.summary,
                 sourceCode: embedding.sourceCode,
                 fileName: embedding.fileName,
