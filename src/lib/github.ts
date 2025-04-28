@@ -2,7 +2,7 @@ import { db } from "@/server/db";
 import { Octokit } from "@octokit/rest";
 import { string } from "zod";
 import axios from "axios";
-import { aiSummariseCommit } from "./gemini";
+import { summariseCode } from "./gemini";
 
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -90,6 +90,7 @@ export const pollCommits = async (projectId: string) => {
     return commits;
 };
 
+
 async function summariseCommit(githubUrl: string, commitHash: string) {
     //get the diff, then pass the diff to the ai
     const { data } = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
@@ -97,7 +98,7 @@ async function summariseCommit(githubUrl: string, commitHash: string) {
             Accept: "application/vnd.github.v3.diff"
         }
     })
-    return await aiSummariseCommit(data) || ""
+    return await summariseCode(data) || ""
 }
 
 
